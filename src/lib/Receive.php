@@ -86,22 +86,22 @@ class Receive
 
         if (!empty($postStr)) {
             $postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
-            $fromUsername = $postObj->FromUserName; #用户OPEN_ID
-            $toUsername = $postObj->ToUserName; #服务号ID
-            $keyword = trim($postObj->Content);
-            $MsgType = $postObj->MsgType;
-            $Event = $postObj->Event;
-            $Content = $postObj->Content;
-            $EventKey = $postObj->EventKey;
+            $fromUsername = (array)$postObj->FromUserName; #用户OPEN_ID
+            $toUsername = (array)$postObj->ToUserName; #服务号ID
+            $keyword = (array)$postObj->Content;
+            $MsgType = (array)$postObj->MsgType;
+            $Event = (array)$postObj->Event;
+            $Content = (array)$postObj->Content;
+            $EventKey = (array)$postObj->EventKey;
 
             #最终执行的命令
-            $shell = $MsgType;
+            $shell = $MsgType[0];
             if(!empty($Event)){
-                $shell .= $Event;
+                $shell .= '.'.$Event[0];
             }
 
             if(!empty($Event) && $EventKey){
-                $shell .= $Event;
+                $shell .= '.'.$EventKey[0];
             }
 
             #默认发送
@@ -117,7 +117,7 @@ class Receive
             $time = time();
 
             #默认参数：1类型，2发送人，3接收人，4时间戳
-            $values = [$textTpl, $fromUsername, $toUsername, $time];
+            $values = [$textTpl, $fromUsername[0], $toUsername[0], $time];
 
             #把参数组合起来再回调sprintf参数
             $values = array_merge($values,array_values($shell));
