@@ -82,7 +82,7 @@ class Receive
             $postStr = file_get_contents("php://input");
         }
 
-        file_put_contents('receive.log',$postStr);
+        file_put_contents('./runtime/receive.log',$postStr);
 
         if (!empty($postStr)) {
             $postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
