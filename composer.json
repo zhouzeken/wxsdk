@@ -1,0 +1,23 @@
+{
+    "name": "zhouzeken/wxsdk",
+    "description": "微信开发sdk封装",
+    "keywords": ["php","微信开发"],
+    "homepage": "https://github.com/zhouzeken/wxsdk",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "zhouzeken",
+            "email": "1454740914@qq.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=7.1",
+        "wechatpay/wechatpay": "dev-main"
+    },
+    "autoload": {
+        "psr-4":{
+             "zhouzeken\\wxsdk\\": "src/"
+         }
+    }
+}
