@@ -13,7 +13,7 @@
     "minimum-stability": "dev",
     "require": {
         "php": ">=7.1",
-        "wechatpay/wechatpay": "dev-main"
+        "wechatpay/wechatpay": "1.4.8"
     },
     "autoload": {
         "psr-4":{
