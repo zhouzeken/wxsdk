@@ -77,7 +77,7 @@ class Receive
      * @return bool
      */
     private function push($push_config){
-        $postStr = @$GLOBALS['HTTP_RAW_POST_DATA'];
+        $postStr = isset($GLOBALS['HTTP_RAW_POST_DATA']) ? $GLOBALS['HTTP_RAW_POST_DATA'] : false;
         if(empty($postStr)) {
             $postStr = file_get_contents("php://input");
         }
