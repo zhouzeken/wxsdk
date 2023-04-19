@@ -69,7 +69,7 @@ class Receive
 
     /**
      * 接收推送
-     * 官方文档：https://developers.weixin.qq.com/doc/offiaccount/Custom_Menus/Custom_Menu_Push_Events.html
+     * 官方文档：https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Receiving_event_pushes.html
      * @param string $signature 加密串
      * @param string $timestamp 时间戳
      * @param string $nonce 随机数
@@ -123,6 +123,7 @@ class Receive
             $values = array_merge($values,array_values($shell));
             $resultStr = call_user_func_array('sprintf',$values);
             echo $resultStr;
+            file_put_contents('./runtime/receive2.log',$resultStr);
         } else {
             echo "";
             exit;
@@ -156,7 +157,8 @@ class Receive
     }
 
     /**
-     * 微信消息模板
+     * 被动恢复消息模板
+     * 官方文档：https://developers.weixin.qq.com/doc/offiaccount/Message_Management/Passive_user_reply_message.html
      * @param null $type
      * @return string
      */
@@ -165,7 +167,7 @@ class Receive
 
         switch($type){
             case 'image':
-                //图片消息
+                //回复-图片消息
                 $tpl .= "<xml>";
                 $tpl .= "<ToUserName><![CDATA[%s]]></ToUserName>";
                 $tpl .= "<FromUserName><![CDATA[%s]]></FromUserName>";
@@ -178,197 +180,66 @@ class Receive
                 break;
 
             case 'voice':
-                //语音消息
+                //回复-语音消息
                 $tpl .= "<xml>";
                 $tpl .= "<ToUserName><![CDATA[%s]]></ToUserName>";
                 $tpl .= "<FromUserName><![CDATA[%s]]></FromUserName>";
                 $tpl .= "<CreateTime>%s</CreateTime>";
                 $tpl .= "<MsgType><![CDATA[%s]]></MsgType>";
+                $tpl .= "<Voice>";
                 $tpl .= "<MediaId><![CDATA[%s]]></MediaId>";
-                $tpl .= "<Format><![CDATA[%s]]></Format>";
-                $tpl .= "<MsgId>%s</MsgId>";
+                $tpl .= "</Voice>";
                 $tpl .= "</xml>";
                 break;
 
             case 'video':
-                //视频消息
+                //回复-视频消息
                 $tpl .= "<xml>";
                 $tpl .= "<ToUserName><![CDATA[%s]]></ToUserName>";
                 $tpl .= "<FromUserName><![CDATA[%s]]></FromUserName>";
                 $tpl .= "<CreateTime>%s</CreateTime>";
                 $tpl .= "<MsgType><![CDATA[%s]]></MsgType>";
+                $tpl .= "<Video>";
                 $tpl .= "<MediaId><![CDATA[%s]]></MediaId>";
-                $tpl .= "<ThumbMediaId><![CDATA[%s]]></ThumbMediaId>";
-                $tpl .= "<MsgId>%s</MsgId>";
-                $tpl .= "</xml>";
-                break;
-
-            case 'shortvideo':
-                //小视频消息
-                $tpl .= "<xml>";
-                $tpl .= "<ToUserName><![CDATA[%s]]></ToUserName>";
-                $tpl .= "<FromUserName><![CDATA[%s]]></FromUserName>";
-                $tpl .= "<CreateTime>%s</CreateTime>";
-                $tpl .= "<MsgType><![CDATA[%s]]></MsgType>";
-                $tpl .= "<MediaId><![CDATA[%s]]></MediaId>";
-                $tpl .= "<ThumbMediaId><![CDATA[%s]]></ThumbMediaId>";
-                $tpl .= "<MsgId>%s</MsgId>";
-                $tpl .= "</xml>";
-                break;
-
-            case 'location':
-                //地理位置消息
-                $tpl .= "<xml>";
-                $tpl .= "<ToUserName><![CDATA[%s]]></ToUserName>";
-                $tpl .= "<FromUserName><![CDATA[%s]]></FromUserName>";
-                $tpl .= "<CreateTime>%s</CreateTime>";
-                $tpl .= "<MsgType><![CDATA[%s]]></MsgType>";
-                $tpl .= "<Location_X>%s</Location_X>";
-                $tpl .= "<Location_Y>%s</Location_Y>";
-                $tpl .= "<Scale>%s</Scale>";
-                $tpl .= "<Label><![CDATA[%s]]></Label>";
-                $tpl .= "<MsgId>%s</MsgId>";
-                $tpl .= "</xml>";
-                break;
-
-            case 'link':
-                //链接消息
-                $tpl .= "<xml>";
-                $tpl .= "<ToUserName><![CDATA[%s]]></ToUserName>";
-                $tpl .= "<FromUserName><![CDATA[%s]]></FromUserName>";
-                $tpl .= "<CreateTime>%s</CreateTime>";
-                $tpl .= "<MsgType><![CDATA[%s]]></MsgType>";
-                $tpl .= "<Title><![CDATA[%s] ]></Title>";
+                $tpl .= "<Title><![CDATA[%s]]></Title>";
                 $tpl .= "<Description><![CDATA[%s]]></Description>";
+                $tpl .= "</Video>";
+                $tpl .= "</xml>";
+                break;
+            case 'music':
+                //回复-音乐消息
+                $tpl .= "<xml>";
+                $tpl .= "<ToUserName><![CDATA[%s]]></ToUserName>";
+                $tpl .= "<FromUserName><![CDATA[%s]]></FromUserName>";
+                $tpl .= "<CreateTime>%s</CreateTime>";
+                $tpl .= "<MsgType><![CDATA[%s]]></MsgType>";
+                $tpl .= "<Music>";
+                $tpl .= "<Title><![CDATA[%s]]></Title>";
+                $tpl .= "<Description><![CDATA[%s]]></Description>";
+                $tpl .= "<MusicUrl><![CDATA[%s]]></MusicUrl>";
+                $tpl .= "<HQMusicUrl><![CDATA[%s]]></HQMusicUrl>";
+                $tpl .= "<ThumbMediaId><![CDATA[%s]]></ThumbMediaId>";
+                $tpl .= "</Music>";
+                $tpl .= "</xml>";
+                break;
+            case 'news':
+                //回复-图文消息
+                $tpl .= "<xml>";
+                $tpl .= "<ToUserName><![CDATA[%s]]></ToUserName>";
+                $tpl .= "<FromUserName><![CDATA[%s]]></FromUserName>";
+                $tpl .= "<CreateTime>%s</CreateTime>";
+                $tpl .= "<MsgType><![CDATA[%s]]></MsgType>";
+                $tpl .= "<ArticleCount>1</ArticleCount>";
+                $tpl .= "<Articles>";
+                $tpl .= "<item>";
+                $tpl .= "<Title><![CDATA[%s]]></Title>";
+                $tpl .= "<Description><![CDATA[%s]]></Description>";
+                $tpl .= "<PicUrl><![CDATA[%s]]></PicUrl>";
                 $tpl .= "<Url><![CDATA[%s]]></Url>";
-                $tpl .= "<MsgId>%s</MsgId>";
-                $tpl .= "</xml>";
-                break;
-
-            case 'CLICK':
-                //点击菜单拉取消息时的事件推送
-                $tpl .= "<xml>";
-                $tpl .= "<ToUserName><![CDATA[%s]]></ToUserName>";
-                $tpl .= "<FromUserName><![CDATA[%s]]></FromUserName>";
-                $tpl .= "<CreateTime>%s</CreateTime>";
-                $tpl .= "<MsgType><![CDATA[%s]]></MsgType>";
-                $tpl .= "<Event><![CDATA[event]]></Event>";
-                $tpl .= "<EventKey><![CDATA[CLICK]]></EventKey>";
-                $tpl .= "</xml>";
-                break;
-
-            case 'VIEW':
-                //点击菜单跳转链接时的事件推送
-                $tpl .= "<xml>";
-                $tpl .= "<ToUserName><![CDATA[%s]]></ToUserName>";
-                $tpl .= "<FromUserName><![CDATA[%s]]></FromUserName>";
-                $tpl .= "<CreateTime>%s</CreateTime>";
-                $tpl .= "<MsgType><![CDATA[%s]]></MsgType>";
-                $tpl .= "<Event><![CDATA[event]]></Event>";
-                $tpl .= "<EventKey><![CDATA[VIEW]]></EventKey>";
-                $tpl .= "<MenuId>%s</MenuId>";
-                $tpl .= "</xml>";
-                break;
-
-            case 'scancode_push':
-                //scancode_push：扫码推事件的事件推送
-                $tpl .= "<xml>";
-                $tpl .= "<ToUserName><![CDATA[%s]]></ToUserName>";
-                $tpl .= "<FromUserName><![CDATA[%s]]></FromUserName>";
-                $tpl .= "<CreateTime>%s</CreateTime>";
-                $tpl .= "<MsgType><![CDATA[%s]]></MsgType>";
-                $tpl .= "<Event><![CDATA[event]]></Event>";
-                $tpl .= "<EventKey><![CDATA[scancode_push]]></EventKey>";
-                $tpl .= "<ScanCodeInfo><ScanType><![CDATA[%s]]></ScanType>";
-                $tpl .= "<ScanResult><![CDATA[%s]]></ScanResult>";
-                $tpl .= "</ScanCodeInfo>";
-                $tpl .= "</xml>";
-                break;
-
-            case 'scancode_waitmsg':
-                //scancode_waitmsg：扫码推事件且弹出“消息接收中”提示框的事件推送
-                $tpl .= "<xml>";
-                $tpl .= "<ToUserName><![CDATA[%s]]></ToUserName>";
-                $tpl .= "<FromUserName><![CDATA[%s]]></FromUserName>";
-                $tpl .= "<CreateTime>%s</CreateTime>";
-                $tpl .= "<MsgType><![CDATA[%s]]></MsgType>";
-                $tpl .= "<Event><![CDATA[event]]></Event>";
-                $tpl .= "<EventKey><![CDATA[scancode_waitmsg]]></EventKey>";
-                $tpl .= "<ScanCodeInfo><ScanType><![CDATA[%s]]></ScanType>";
-                $tpl .= "<ScanResult><![CDATA[%s]]></ScanResult>";
-                $tpl .= "</ScanCodeInfo>";
-                $tpl .= "</xml>";
-                break;
-
-            case 'pic_sysphoto':
-                //pic_sysphoto：弹出系统拍照发图的事件推送
-                $tpl .= "<xml>";
-                $tpl .= "<ToUserName><![CDATA[%s]]></ToUserName>";
-                $tpl .= "<FromUserName><![CDATA[%s]]></FromUserName>";
-                $tpl .= "<CreateTime>%s</CreateTime>";
-                $tpl .= "<MsgType><![CDATA[%s]]></MsgType>";
-                $tpl .= "<Event><![CDATA[event]]></Event>";
-                $tpl .= "<EventKey><![CDATA[pic_sysphoto]]></EventKey>";
-                $tpl .= "<SendPicsInfo><Count>%s</Count>";
-                $tpl .= "<PicList><item><PicMd5Sum><![CDATA[%s]]></PicMd5Sum>";
                 $tpl .= "</item>";
-                $tpl .= "</PicList>";
-                $tpl .= "</SendPicsInfo>";
+                $tpl .= "</Articles>";
                 $tpl .= "</xml>";
                 break;
-
-            case 'pic_photo_or_album':
-                //pic_photo_or_album：弹出拍照或者相册发图的事件推送
-                $tpl .= "<xml>";
-                $tpl .= "<ToUserName><![CDATA[%s]]></ToUserName>";
-                $tpl .= "<FromUserName><![CDATA[%s]]></FromUserName>";
-                $tpl .= "<CreateTime>%s</CreateTime>";
-                $tpl .= "<MsgType><![CDATA[%s]]></MsgType>";
-                $tpl .= "<Event><![CDATA[event]]></Event>";
-                $tpl .= "<EventKey><![CDATA[pic_photo_or_album]]></EventKey>";
-                $tpl .= "<SendPicsInfo><Count>%s</Count>";
-                $tpl .= "<PicList><item><PicMd5Sum><![CDATA[%s]]></PicMd5Sum>";
-                $tpl .= "</item>";
-                $tpl .= "</PicList>";
-                $tpl .= "</SendPicsInfo>";
-                $tpl .= "</xml>";
-                break;
-
-            case 'pic_weixin':
-                //pic_weixin：弹出微信相册发图器的事件推送
-                $tpl .= "<xml>";
-                $tpl .= "<ToUserName><![CDATA[%s]]></ToUserName>";
-                $tpl .= "<FromUserName><![CDATA[%s]]></FromUserName>";
-                $tpl .= "<CreateTime>%s</CreateTime>";
-                $tpl .= "<MsgType><![CDATA[%s]]></MsgType>";
-                $tpl .= "<Event><![CDATA[pic_weixin]]></Event>";
-                $tpl .= "<EventKey><![CDATA[%s]]></EventKey>";
-                $tpl .= "<SendPicsInfo><Count>%s</Count>";
-                $tpl .= "<PicList><item><PicMd5Sum><![CDATA[%s]]></PicMd5Sum>";
-                $tpl .= "</item>";
-                $tpl .= "</PicList>";
-                $tpl .= "</SendPicsInfo>";
-                $tpl .= "</xml>";
-                break;
-
-            case 'location_select':
-                //location_select：弹出地理位置选择器的事件推送
-                $tpl .= "<xml>";
-                $tpl .= "<ToUserName><![CDATA[%s]]></ToUserName>";
-                $tpl .= "<FromUserName><![CDATA[%s]]></FromUserName>";
-                $tpl .= "<CreateTime>%s</CreateTime>";
-                $tpl .= "<MsgType><![CDATA[%s]]></MsgType>";
-                $tpl .= "<Event><![CDATA[location_select]]></Event>";
-                $tpl .= "<EventKey><![CDATA[%s]]></EventKey>";
-                $tpl .= "<SendLocationInfo><Location_X><![CDATA[%s]]></Location_X>";
-                $tpl .= "<Location_Y><![CDATA[%s]]></Location_Y>";
-                $tpl .= "<Scale><![CDATA[%s]]></Scale>";
-                $tpl .= "<Label><![CDATA[%s]]></Label>";
-                $tpl .= "<Poiname><![CDATA[%s]]></Poiname>";
-                $tpl .= "</SendLocationInfo>";
-                $tpl .= "</xml>";
-                break;
-
             case 'text':
             default:
                 //文本信息
@@ -378,7 +249,6 @@ class Receive
                 $tpl .= "<CreateTime>%s</CreateTime>";
                 $tpl .= "<MsgType><![CDATA[%s]]></MsgType>";
                 $tpl .= "<Content><![CDATA[%s]]></Content>";
-                $tpl .= "<FuncFlag>0</FuncFlag>";
                 $tpl .= "</xml>";
         }
         return $tpl;
