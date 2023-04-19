@@ -85,6 +85,15 @@ class Receive
 
         file_put_contents('./runtime/receive.log',$postStr);
 
+        #示例接收内容
+//        $postStr = '<xml><ToUserName><![CDATA[gh_f3dabded4525]]></ToUserName>
+//<FromUserName><![CDATA[oLMT26Hctgb1lR-Uw64OzZIRMueI]]></FromUserName>
+//<CreateTime>1681871222</CreateTime>
+//<MsgType><![CDATA[text]]></MsgType>
+//<Content><![CDATA[哎]]></Content>
+//<MsgId>24078606221312090</MsgId>
+//</xml>';
+
         if (!empty($postStr)) {
             $postObj = simplexml_load_string($postStr, 'SimpleXMLElement', LIBXML_NOCDATA);
             $fromUsername = (array)$postObj->FromUserName; #用户OPEN_ID
@@ -111,7 +120,7 @@ class Receive
             ];
 
             #匹配发送模板
-            switch ($MsgType){
+            switch ($MsgType[0]){
                 case 'event':
                     #事件推送-回复
                     $shell = isset($push_config[$shell]) ? $push_config[$shell] : $default;
@@ -120,7 +129,8 @@ class Receive
                     #普通消息接收-回复
                     $shell = $default;
                     foreach ($text_config as $key=>$value){
-                        if(in_array($keyword,$key)){
+                        $key = explode(',',$key);
+                        if(in_array($keyword[0],$key)){
                             $shell = $value;
                             break;
                         }

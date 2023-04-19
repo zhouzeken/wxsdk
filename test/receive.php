@@ -59,16 +59,15 @@ $push_config = [
 
 #用户发送普通文字消息到公众号的回复，根据关键字匹配回复内容
 $text_config = [
-    ['你好','呵呵','大哥'] => [
+    '你好,呵呵,大哥' => [
         'msgTpl' => 'text',
         'Content' => '这是回复1'
     ],
-    ['阿尼','分卷','哎'] => [
+    '阿尼,分卷,哎' => [
         'msgTpl' => 'text',
         'Content' => '这是回复2'
     ]
 ];
-
 $res = Init::getInstance([
     'token' => $token,
     'EncodingAESKey' => $EncodingAESKey
