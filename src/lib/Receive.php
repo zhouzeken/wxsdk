@@ -32,17 +32,18 @@ class Receive
     }
 
     /**
-     * 事件推送
-     * @param $push_config array 不同事件的处理逻辑配置
+     * 接收事件推送
+     * @param $push_config 接收到事件推送后的回复
+     * @param $text_config #接收普通消息后的回复
      * @return void
      */
-    public function start($push_config=[]){
+    public function start($push_config=[],$text_config=[]){
         if (isset($_GET['echostr'])) {
             #验证url
             $this->check();
         } else {
             #接收推送并处理
-            $this->push($push_config);
+            $this->push($push_config,$text_config);
         }
     }
 
@@ -76,7 +77,7 @@ class Receive
      * @param string $token 在公众号后台定义好的令牌(Token)
      * @return bool
      */
-    private function push($push_config){
+    private function push($push_config=[],$text_config=[]){
         $postStr = isset($GLOBALS['HTTP_RAW_POST_DATA']) ? $GLOBALS['HTTP_RAW_POST_DATA'] : false;
         if(empty($postStr)) {
             $postStr = file_get_contents("php://input");
@@ -91,7 +92,6 @@ class Receive
             $keyword = (array)$postObj->Content;
             $MsgType = (array)$postObj->MsgType;
             $Event = (array)$postObj->Event;
-            $Content = (array)$postObj->Content;
             $EventKey = (array)$postObj->EventKey;
 
             #最终执行的命令
@@ -107,11 +107,30 @@ class Receive
             #默认发送
             $default = [
                 'msgTpl' => 'text',
-                'Content' => '即将跳转。。。'
+                'Content' => '我不是很理解。。。'
             ];
 
             #匹配发送模板
-            $shell = isset($push_config[$shell]) ? $push_config[$shell] : $default;
+            switch ($MsgType){
+                case 'text': #普通消息接收-回复
+                    foreach ($text_config as $key=>$value){
+                        if(in_array($keyword,$key)){
+                            $shell = $value;
+                            break;
+                        }
+                    }
+                    break;
+                case 'image': #图片消息
+                case 'voice': #语音消息
+                case 'video': #视频消息
+                case 'shortvideo': #小视频消息
+                case 'location': #地理位置消息
+                case 'link': #链接消息
+                case 'event': #事件推送-回复
+                default: #事件推送-回复
+                $shell = isset($push_config[$shell]) ? $push_config[$shell] : $default;
+            }
+
             $textTpl = $this->MsgTpl($shell['msgTpl']);
 
             $time = time();
