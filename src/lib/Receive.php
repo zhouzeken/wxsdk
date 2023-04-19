@@ -112,7 +112,13 @@ class Receive
 
             #匹配发送模板
             switch ($MsgType){
-                case 'text': #普通消息接收-回复
+                case 'event':
+                    #事件推送-回复
+                    $shell = isset($push_config[$shell]) ? $push_config[$shell] : $default;
+                    break;
+                case 'text':
+                    #普通消息接收-回复
+                    $shell = $default;
                     foreach ($text_config as $key=>$value){
                         if(in_array($keyword,$key)){
                             $shell = $value;
@@ -120,15 +126,34 @@ class Receive
                         }
                     }
                     break;
-                case 'image': #图片消息
-                case 'voice': #语音消息
-                case 'video': #视频消息
-                case 'shortvideo': #小视频消息
-                case 'location': #地理位置消息
-                case 'link': #链接消息
-                case 'event': #事件推送-回复
-                default: #事件推送-回复
-                $shell = isset($push_config[$shell]) ? $push_config[$shell] : $default;
+                case 'image':
+                    #图片消息-回复
+                    $shell = $default;
+                    break;
+                case 'voice':
+                    #语音消息-回复
+                    $shell = $default;
+                    break;
+                case 'video':
+                    #视频消息-回复
+                    $shell = $default;
+                    break;
+                case 'shortvideo':
+                    #小视频消息-回复
+                    $shell = $default;
+                    break;
+                case 'location':
+                    #地理位置消息-回复
+                    $shell = $default;
+                    break;
+                case 'link':
+                    #链接消息-回复
+                    $shell = $default;
+                    break;
+                default:
+                    #默认回复
+                    $shell = $default;
+                    break;
             }
 
             $textTpl = $this->MsgTpl($shell['msgTpl']);
