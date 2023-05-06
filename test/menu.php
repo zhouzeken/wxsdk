@@ -11,7 +11,7 @@ $config = [
     'appid' => $appid,
     'secret' => $secret,
 ];
-//$res = Init::getInstance($config)->menu()->getMenu(['access_token'=>$token]);
+$res = \zhouzeken\wxsdk\Init::getInstance($config)->menu()->getMenu(['access_token'=>$token]);
 //print_r($res);
 //print_r('<br>');
 
@@ -26,7 +26,7 @@ $params = [
         ['name'=>'菜单1','sub_button'=>[
             ['type'=>'click','name'=>'点击','key'=>'key_111'],
             ['type'=>'view','name'=>'跳转','url'=>'http://www.baidu.com/'],
-//            ['type'=>'miniprogram','name'=>'小程序','url'=>'http://www.baidu.com/','appid'=>'wx9c1bffcf8ad42fe0','pagepath'=>'pages/homepage/homepage'],
+            ['type'=>'miniprogram','name'=>'小程序','url'=>'http://www.baidu.com/','appid'=>'wx9c1bffcf8ad42fe0','pagepath'=>'pages/homepage/homepage'],
             ['type'=>'scancode_push','name'=>'扫码推事件','key'=>'key_222','sub_button'=>[]],
             ['type'=>'scancode_waitmsg','name'=>'扫码带提示','key'=>'key_333','sub_button'=>[]],
         ]],
@@ -35,7 +35,7 @@ $params = [
         ]]
     ]
 ];
-$res = Init::getInstance($config)->menu()->createMenu($params);
+$res = \zhouzeken\wxsdk\Init::getInstance($config)->menu()->createMenu($params);
 print_r($res);
 print_r('<br>');
 
@@ -47,6 +47,6 @@ $config = [
 $params = [
     'access_token'=>$token,
 ];
-//$res = Init::getInstance($config)->menu()->deleteMenu($params);
+//$res = \zhouzeken\wxsdk\Init::getInstance($config)->menu()->deleteMenu($params);
 //print_r($res);
 //print_r('<br>');

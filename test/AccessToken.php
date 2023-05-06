@@ -12,9 +12,9 @@ $config = [
     'secret' => $secret,
     'grant_type' => 'client_credential'
 ];
-//$res = Init::getInstance($config)->AccessToken()->getAccessToken();
-//print_r($res);
-//print_r('<br>');
+$res = \zhouzeken\wxsdk\Init::getInstance($config)->AccessToken()->getAccessToken();
+print_r($res);
+print_r('<br>');
 
 //获取Stable Access token
 $config = [
@@ -23,6 +23,6 @@ $config = [
     'grant_type' => 'client_credential',
     'force_refresh' => false
 ];
-$res = Init::getInstance($config)->AccessToken()->getStableAccessToken();
+$res = \zhouzeken\wxsdk\Init::getInstance($config)->AccessToken()->getStableAccessToken();
 print_r($res);
 print_r('<br>');

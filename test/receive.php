@@ -13,9 +13,7 @@ $token = 'f0597b058353fc582b0b88dce9f6a11a';
 #消息加解密密钥（消息加解密方式为【兼容模式/安全模式】用到）
 $EncodingAESKey = 'xxx';
 
-#事件处理逻辑配置,官方文档：https://developers.weixin.qq.com/doc/offiaccount/Custom_Menus/Custom_Menu_Push_Events.html
-
-#推送配置,配合菜单栏，固定参数类型(msgTpl).对应lib/Receive.php 下的MsgTpl方法，其它参数一样也是这个方法
+#消息回复配置，配合菜单栏，固定参数类型(msgTpl).对应lib/Receive.php 下的MsgTpl方法，其它参数一样也是这个方法
 $push_config = [
     #用户关注公众号
     'event.subscribe' => [
@@ -68,7 +66,7 @@ $text_config = [
         'Content' => '这是回复2'
     ]
 ];
-$res = Init::getInstance([
+$res = \zhouzeken\wxsdk\Init::getInstance([
     'token' => $token,
     'EncodingAESKey' => $EncodingAESKey
 ])->receive()->start($push_config,$text_config);
